@@ -1,8 +1,8 @@
 {
-  "name": "typescript-action",
-  "version": "0.0.0",
+  "name": "slack-review-stats",
+  "version": "0.1.0",
   "private": true,
-  "description": "TypeScript template action",
+  "description": "Post review stats to slack",
   "main": "lib/main.js",
   "scripts": {
     "build": "tsc",
@@ -22,12 +22,15 @@
     "node",
     "setup"
   ],
-  "author": "",
+  "author": "Georg Bremer",
   "license": "MIT",
   "dependencies": {
-    "@actions/core": "^1.6.0"
+    "@actions/core": "^1.6.0",
+    "ms": "^2.1.3",
+    "node-fetch": "^3.2.10"
   },
   "devDependencies": {
+    "@types/ms": "^0.7.31",
     "@types/node": "^16.10.5",
     "@typescript-eslint/parser": "^5.8.1",
     "@vercel/ncc": "^0.31.1",
