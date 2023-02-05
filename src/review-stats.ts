@@ -1,6 +1,6 @@
-const ms = require('ms')
-const dayjs = require('dayjs')
-const isoWeek = require('dayjs/plugin/isoWeek')
+import ms from 'ms'
+import dayjs from 'dayjs'
+import isoWeek from 'dayjs/plugin/isoWeek'
 dayjs.extend(isoWeek)
 
 const GITHUB_ENDPOINT = 'https://api.github.com/graphql'
@@ -62,7 +62,6 @@ fragment UserFragment on User {
 `
 
 const fetchData = async (mergedAfter: Date) => {
-  const fetch = require('node-fetch')
   const searchQuery = `is:pr archived:false is:closed is:merged repo:${REPO} merged:>=${mergedAfter.toISOString()}`
   const response = await fetch(GITHUB_ENDPOINT, {
     method: 'POST',
@@ -87,8 +86,7 @@ const fetchData = async (mergedAfter: Date) => {
 }
 
 const pushToSlack = async (body: any) => {
-  const fetch = require('node-fetch')
-  const response = await fetch(SLACK_WEBHOOK, {
+  const response = await fetch(SLACK_WEBHOOK!, {
     method: 'POST',
     body: JSON.stringify(body)
   })
@@ -219,7 +217,7 @@ const padRight = (str: string, width: number) => {
   return str.slice(0, length) + ' '.repeat(width - length)
 }
 
-const formatRow = (values: (string|number)[], format: number[]) => {
+const formatRow = (values: (string|number|undefined)[], format: number[]) => {
   const rows = [] as string[]
 
   do {
@@ -260,7 +258,11 @@ const formatReviewers = (reviewerStats) => {
 
   const reviewers = Object.values(reviewerStats)
   reviewers.sort((a: any, b: any) => {
-    return median(a.timesToReview) < median(b.timesToReview) ? -1 : 1 
+    const medianA = median(a.timesToReview)
+    const medianB = median(b.timesToReview)
+    if (medianA === undefined) return 1
+    if (medianB === undefined) return -1
+    return medianA < medianB ? -1 : 1
   })
   reviewers.forEach((reviewer: any) => {
     const {login, timesToReview, reviewedPRs, reviewStates, comments} = reviewer
