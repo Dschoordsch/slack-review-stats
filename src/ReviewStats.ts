@@ -162,6 +162,7 @@ class ReviewStats {
   parseStats = (rawData: any) => {
     const reviewerStats = {} as any
 
+    console.log('rawData:', rawData)
     const prs = rawData.data.search.nodes.map((pr: any) => {
       const publishedAt = new Date(pr.publishedAt)
       const mergedAt = new Date(pr.mergedAt)
