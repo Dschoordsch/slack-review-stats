@@ -2,17 +2,21 @@ name: 'Slack review stats'
 description: 'Post GitHub review stats to slack'
 author: 'Georg Bremer'
 inputs:
-  github-token:
-    required: true
-    description: 'GitHub auth token, will default to { secrets.GITHUB_TOKEN }'
-    default: ${{ github.token }}
   slack-webhook:
     required: true
     description: 'Webhook of the channel to post the stats to'
+  repository:
+    required: false
+    description: 'GitHub repository from where to fetch the stats, default to { GITHUB_REPOSITORY }'
+    default: ${{ github.token }}
+  github-token:
+    required: false
+    description: 'GitHub auth token, will default to { secrets.GITHUB_TOKEN }'
+    default: ${{ github.token }}
   time-diff:
-    required: true
+    required: false
     description: 'Time difference for the last PRs merged'
     default: '7d'
 runs:
-  using: 'node16'
+  using: 'node18'
   main: 'dist/index.js'
