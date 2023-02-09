@@ -18,5 +18,5 @@ inputs:
     description: 'Time difference for the last PRs merged'
     default: '7d'
 runs:
-  using: 'node18'
+  using: 'node16'
   main: 'dist/index.js'

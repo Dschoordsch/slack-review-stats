@@ -1,6 +1,7 @@
 import ms from 'ms'
 import dayjs from 'dayjs'
 import isoWeek from 'dayjs/plugin/isoWeek'
+import fetch from 'node-fetch'
 dayjs.extend(isoWeek)
 
 const GITHUB_ENDPOINT = 'https://api.github.com/graphql'
