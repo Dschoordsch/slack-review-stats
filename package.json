@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "description": "Post review stats to slack",
-  "main": "lib/main.js",
+  "main": "lib/index.js",
   "scripts": {
     "build": "tsc",
     "format": "prettier --write '**/*.ts'",
