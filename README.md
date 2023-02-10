@@ -18,7 +18,7 @@ jobs:
   stats:
     runs-on: ubuntu-latest
     steps:
-      - uses: Dschoordsch/slack-review-stats@v1
+      - uses: Dschoordsch/slack-review-stats@v1.0.0
         with:
           slack-webhook: ${{ secrets.SLACK_WEBHOOK }}
 ```
@@ -32,7 +32,7 @@ Then run [ncc](https://github.com/zeit/ncc) and push the results:
 $ yarn package
 $ git add dist
 $ git commit -a -m "prod dependencies"
-$ git push origin releases/v1
+$ git push origin releases/v1.0.0
 ```
 
 Your action is now published! :rocket: 
