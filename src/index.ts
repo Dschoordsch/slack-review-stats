@@ -1,5 +1,5 @@
 import * as core from '@actions/core'
-import ReviewStats from './ReviewStats'
+import ReviewStats from './reviewStats'
 
 async function run(): Promise<void> {
   try {
