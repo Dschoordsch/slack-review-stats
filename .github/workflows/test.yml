@@ -22,3 +22,4 @@ jobs:
       - uses: ./
         with:
           slack-webhook: ${{ secrets.SLACK_WEBHOOK }}
+          repository: ${{ github.repository }}
