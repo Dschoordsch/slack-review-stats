@@ -4,6 +4,7 @@ import ReviewStats from './reviewStats'
 async function run(): Promise<void> {
   try {
     const slackWebhook = core.getInput('slack-webhook', {required: true})
+    core.info(`REPO: ${process.env.GITHUB_REPOSITORY}`)
     const repository =
       core.getInput('repository') || process.env.GITHUB_REPOSITORY!
     const githubToken =
