@@ -134,7 +134,7 @@ class ReviewStats {
     const searchQuery = `is:pr archived:false is:closed is:merged repo:${
       this.repository
     } merged:>=${mergedAfter.toISOString()}`
-    core.info(`searchQuery: ${searchQuery}`)
+    core.debug(`searchQuery: ${searchQuery}`)
     const response = await fetch(GITHUB_ENDPOINT, {
       method: 'POST',
       headers: {

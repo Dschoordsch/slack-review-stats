@@ -118,7 +118,7 @@ const isoWeek_1 = __importDefault(__nccwpck_require__(1929));
 const node_fetch_1 = __importDefault(__nccwpck_require__(4429));
 dayjs_1.default.extend(isoWeek_1.default);
 const GITHUB_ENDPOINT = 'https://api.github.com/graphql';
-const QUERY = `
+const query = `
 query($searchQuery: String!) { 
   search(query: $searchQuery, type: ISSUE, first: 100) {
     pageInfo {
@@ -212,6 +212,7 @@ class ReviewStats {
     constructor(options) {
         this.fetchData = (mergedAfter) => __awaiter(this, void 0, void 0, function* () {
             const searchQuery = `is:pr archived:false is:closed is:merged repo:${this.repository} merged:>=${mergedAfter.toISOString()}`;
+            core.debug(`searchQuery: ${searchQuery}`);
             const response = yield (0, node_fetch_1.default)(GITHUB_ENDPOINT, {
                 method: 'POST',
                 headers: {
@@ -220,7 +221,7 @@ class ReviewStats {
                     Authorization: `bearer ${this.githubToken}`
                 },
                 body: JSON.stringify({
-                    QUERY,
+                    query,
                     variables: {
                         searchQuery
                     }
