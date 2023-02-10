@@ -48,8 +48,8 @@ function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const slackWebhook = core.getInput('slack-webhook', { required: true });
-            core.info(`REPO: ${process.env.GITHUB_REPOSITORY}`);
             const repository = core.getInput('repository') || process.env.GITHUB_REPOSITORY;
+            core.info(`REPO: ${repository}`);
             const githubToken = core.getInput('github-token') || process.env.GITHUB_TOKEN;
             const timeDiff = core.getInput('time-diff') || '7d';
             const reviewStats = new reviewStats_1.default({
