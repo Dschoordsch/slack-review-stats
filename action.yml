@@ -8,7 +8,7 @@ inputs:
   repository:
     required: false
     description: 'GitHub repository from where to fetch the stats, default to { GITHUB_REPOSITORY }'
-    default: ${{ github.token }}
+    default: ${{ github.repository }}
   github-token:
     required: false
     description: 'GitHub auth token, will default to { secrets.GITHUB_TOKEN }'
