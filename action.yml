@@ -1,8 +1,9 @@
 name: 'Slack review stats'
 description: 'Post GitHub review stats to slack'
 author: 'Georg Bremer'
-icon: 'clipboard'
-color: 'orange'
+branding:
+  icon: 'clipboard'
+  color: 'orange'
 inputs:
   slack-webhook:
     required: true
