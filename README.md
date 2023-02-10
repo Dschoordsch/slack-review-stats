@@ -2,7 +2,7 @@
 
 This workflow collects review statistics and posts them to Slack. The intention is to increase awareness for reviewers how they're doing. It is developed and used at [ParabolInc/parabol](https://github.com/ParabolInc/parabol).
 
-# TODO
+## TODO
 
 ## Publish to a distribution branch
 

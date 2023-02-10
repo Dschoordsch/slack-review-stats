@@ -1,11 +1,34 @@
 require('./sourcemap-register.js');/******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 2587:
+/***/ 4822:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 "use strict";
 
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -19,6 +42,76 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
+const core = __importStar(__nccwpck_require__(2186));
+const reviewStats_1 = __importDefault(__nccwpck_require__(8585));
+function run() {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const slackWebhook = core.getInput('slack-webhook', { required: true });
+            const repository = core.getInput('repository') || process.env.GITHUB_REPOSITORY;
+            const githubToken = core.getInput('github-token') || process.env.GITHUB_TOKEN;
+            const timeDiff = core.getInput('time-diff') || '7d';
+            const reviewStats = new reviewStats_1.default({
+                slackWebhook,
+                repository,
+                githubToken,
+                timeDiff
+            });
+            reviewStats.main();
+        }
+        catch (error) {
+            if (error instanceof Error)
+                core.setFailed(error.message);
+        }
+    });
+}
+run();
+
+
+/***/ }),
+
+/***/ 8585:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const core = __importStar(__nccwpck_require__(2186));
 const ms_1 = __importDefault(__nccwpck_require__(900));
 const dayjs_1 = __importDefault(__nccwpck_require__(7401));
 const isoWeek_1 = __importDefault(__nccwpck_require__(1929));
@@ -109,7 +202,7 @@ const median = (values) => {
     if (values.length === 0)
         return undefined;
     values.sort();
-    var middle = Math.floor(values.length / 2);
+    const middle = Math.floor(values.length / 2);
     if (values.length % 2)
         return values[middle];
     return (values[middle - 1] + values[middle]) / 2.0;
@@ -124,7 +217,7 @@ class ReviewStats {
                 headers: {
                     accept: 'application/json',
                     'content-type': 'application/json',
-                    'Authorization': `bearer ${this.githubToken}`
+                    Authorization: `bearer ${this.githubToken}`
                 },
                 body: JSON.stringify({
                     QUERY,
@@ -133,7 +226,7 @@ class ReviewStats {
                     }
                 })
             });
-            console.log(`Pulling stats for ${this.repository}: ${response.status}`);
+            core.info(`Pulling stats for ${this.repository}: ${response.status}`);
             //TODO we're not checking pagination yet
             return response.json();
         });
@@ -142,10 +235,11 @@ class ReviewStats {
                 method: 'POST',
                 body: JSON.stringify(body)
             });
-            console.log(`Pushing stats: ${response.status}`);
+            core.info(`Pushing stats: ${response.status}`);
         });
         this.parseStats = (rawData) => {
             const reviewerStats = {};
+            core.debug(`rawData: ${JSON.stringify(rawData)}`);
             const prs = rawData.data.search.nodes.map((pr) => {
                 const publishedAt = new Date(pr.publishedAt);
                 const mergedAt = new Date(pr.mergedAt);
@@ -215,9 +309,9 @@ class ReviewStats {
                     number: pr.number,
                     url: pr.url,
                     author: pr.author,
-                    timeToMerge: timeToMerge,
+                    timeToMerge,
                     comments,
-                    reviews,
+                    reviews
                 };
             });
             return {
@@ -225,10 +319,17 @@ class ReviewStats {
                 prs
             };
         };
-        this.formatReviewers = (reviewerStats) => {
+        this.formatReviewers = reviewerStats => {
             const format = [15, 9];
             const rows = [];
-            rows.push(formatRow(['login', 'median time to review', 'reviewed PRs', 'comments', 'approvals', 'changes requested'], format));
+            rows.push(formatRow([
+                'login',
+                'median time to review',
+                'reviewed PRs',
+                'comments',
+                'approvals',
+                'changes requested'
+            ], format));
             const reviewers = Object.values(reviewerStats);
             reviewers.sort((a, b) => {
                 const medianA = median(a.timesToReview);
@@ -244,20 +345,42 @@ class ReviewStats {
                 const medianTimeToReview = safeMs(median(timesToReview));
                 const approvals = reviewStates.filter(state => state === 'APPROVED').length;
                 const changesRequested = reviewStates.filter(state => state === 'CHANGES_REQUESTED').length;
-                rows.push(formatRow([login, medianTimeToReview, reviewedPRs, comments, approvals, changesRequested], format));
+                rows.push(formatRow([
+                    login,
+                    medianTimeToReview,
+                    reviewedPRs,
+                    comments,
+                    approvals,
+                    changesRequested
+                ], format));
             });
             return rows.join('\n');
         };
-        this.formatPrs = (prs) => {
+        this.formatPrs = prs => {
             const format = [20, 6];
             const rows = [];
             rows.push(formatRow(['', 'min', 'max', 'median'], format));
             const timesToMerge = prs.map(({ timeToMerge }) => timeToMerge);
-            rows.push(formatRow(['time to merge', safeMs(Math.min(...timesToMerge)), safeMs(Math.max(...timesToMerge)), safeMs(median(timesToMerge))], format));
+            rows.push(formatRow([
+                'time to merge',
+                safeMs(Math.min(...timesToMerge)),
+                safeMs(Math.max(...timesToMerge)),
+                safeMs(median(timesToMerge))
+            ], format));
             const comments = prs.map(({ comments }) => comments);
-            rows.push(formatRow(['comments per PR', Math.min(...comments), Math.max(...comments), median(comments)], format));
+            rows.push(formatRow([
+                'comments per PR',
+                Math.min(...comments),
+                Math.max(...comments),
+                median(comments)
+            ], format));
             const reviews = prs.map(({ reviews }) => reviews);
-            rows.push(formatRow(['reviews per PR', Math.min(...reviews), Math.max(...reviews), median(reviews)], format));
+            rows.push(formatRow([
+                'reviews per PR',
+                Math.min(...reviews),
+                Math.max(...reviews),
+                median(reviews)
+            ], format));
             return rows.join('\n');
         };
         this.main = () => __awaiter(this, void 0, void 0, function* () {
@@ -265,57 +388,59 @@ class ReviewStats {
             const mergedSince = new Date(now.valueOf() - (0, ms_1.default)(this.timeDiff));
             const rawData = yield this.fetchData(mergedSince);
             const { reviewerStats, prs } = this.parseStats(rawData);
-            console.log(`Stats for last ${this.timeDiff}`);
-            console.log('Reviewer stats');
-            console.log(this.formatReviewers(reviewerStats));
-            console.log('PR stats');
-            console.log(`Total ${prs.length} PRs merged`);
-            console.log(this.formatPrs(prs));
-            if (process.argv.includes('--debug')) {
-                console.log('\nDEBUG');
-                console.log('Read following PRs');
-                prs.forEach((pr) => {
-                    console.log(`#${pr.number} ${pr.url}`);
-                    console.log(`- author: ${pr.author.login}`);
-                    console.log(`- comments: ${pr.comments}`);
-                    console.log(`- reviews: ${pr.reviews}`);
-                    console.log(`- time to merge: ${(0, ms_1.default)(pr.timeToMerge)}`);
-                });
-                console.log('DEBUG - Not sending to Slack');
-                return;
-            }
+            core.info(`Stats for last ${this.timeDiff}`);
+            core.info('Reviewer stats');
+            core.info(this.formatReviewers(reviewerStats));
+            core.info('PR stats');
+            core.info(`Total ${prs.length} PRs merged`);
+            core.info(this.formatPrs(prs));
+            core.debug('\nDEBUG');
+            core.debug('Read following PRs');
+            prs.forEach(pr => {
+                core.debug(`#${pr.number} ${pr.url}`);
+                core.debug(`- author: ${pr.author.login}`);
+                core.debug(`- comments: ${pr.comments}`);
+                core.debug(`- reviews: ${pr.reviews}`);
+                core.debug(`- time to merge: ${(0, ms_1.default)(pr.timeToMerge)}`);
+            });
             const slackMessage = {
-                blocks: [{
+                blocks: [
+                    {
                         type: 'section',
                         text: {
                             type: 'mrkdwn',
                             text: `*Review stats for last ${this.timeDiff}*\nTotal ${prs.length} PRs merged`
-                        },
-                    }, {
+                        }
+                    },
+                    {
                         type: 'section',
                         text: {
                             type: 'mrkdwn',
                             text: 'Reviewer stats'
-                        },
-                    }, {
+                        }
+                    },
+                    {
                         type: 'section',
                         text: {
                             type: 'mrkdwn',
-                            text: '```\n' + this.formatReviewers(reviewerStats) + '\n```'
-                        },
-                    }, {
+                            text: `\`\`\`\n${this.formatReviewers(reviewerStats)}\n\`\`\``
+                        }
+                    },
+                    {
                         type: 'section',
                         text: {
                             type: 'mrkdwn',
                             text: 'PR stats'
-                        },
-                    }, {
+                        }
+                    },
+                    {
                         type: 'section',
                         text: {
                             type: 'mrkdwn',
-                            text: '```\n' + this.formatPrs(prs) + '\n```'
-                        },
-                    }]
+                            text: `\`\`\`\n${this.formatPrs(prs)}\n\`\`\``
+                        }
+                    }
+                ]
             };
             this.pushToSlack(slackMessage);
         });
@@ -326,75 +451,6 @@ class ReviewStats {
     }
 }
 exports["default"] = ReviewStats;
-
-
-/***/ }),
-
-/***/ 4822:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
-
-"use strict";
-
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-const core = __importStar(__nccwpck_require__(2186));
-const ReviewStats_1 = __importDefault(__nccwpck_require__(2587));
-function run() {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            const slackWebhook = core.getInput('slack-webhook', { required: true });
-            const repository = core.getInput('repository') || process.env.GITHUB_REPOSITORY;
-            const githubToken = core.getInput('github-token') || process.env.GITHUB_TOKEN;
-            const timeDiff = core.getInput('time-diff') || '7d';
-            const reviewStats = new ReviewStats_1.default({
-                slackWebhook,
-                repository,
-                githubToken,
-                timeDiff
-            });
-            reviewStats.main();
-        }
-        catch (error) {
-            if (error instanceof Error)
-                core.setFailed(error.message);
-        }
-    });
-}
-run();
 
 
 /***/ }),
