@@ -71,7 +71,10 @@ const padRight = (str: string, width: number) => {
   return str.slice(0, length) + ' '.repeat(width - length)
 }
 
-const formatRow = (values: (string|number|undefined)[], format: number[]) => {
+const formatRow = (
+  values: (string | number | undefined)[],
+  format: number[]
+) => {
   const rows = [] as string[]
 
   do {
@@ -89,22 +92,22 @@ const formatRow = (values: (string|number|undefined)[], format: number[]) => {
     values = overflow
 
     rows.push(row.join(' | '))
-  } while(values.find(value => !!value))
+  } while (values.find(value => !!value))
 
   return rows.join('\n')
 }
 
 const median = (values: number[]) => {
-  if(values.length === 0) return undefined
+  if (values.length === 0) return undefined
 
   values.sort()
-  var middle = Math.floor(values.length / 2)
+  const middle = Math.floor(values.length / 2)
   if (values.length % 2) return values[middle]
-  return (values[middle- 1] + values[middle]) / 2.0;
+  return (values[middle - 1] + values[middle]) / 2.0
 }
 
-const safeMs = (val: number | undefined | null) => typeof val === 'number' && isFinite(val) ? ms(val) : undefined
-
+const safeMs = (val: number | undefined | null) =>
+  typeof val === 'number' && isFinite(val) ? ms(val) : undefined
 
 export type ReviewStatsOptions = {
   slackWebhook: string
@@ -127,13 +130,15 @@ class ReviewStats {
   }
 
   fetchData = async (mergedAfter: Date) => {
-    const searchQuery = `is:pr archived:false is:closed is:merged repo:${this.repository} merged:>=${mergedAfter.toISOString()}`
+    const searchQuery = `is:pr archived:false is:closed is:merged repo:${
+      this.repository
+    } merged:>=${mergedAfter.toISOString()}`
     const response = await fetch(GITHUB_ENDPOINT, {
       method: 'POST',
       headers: {
         accept: 'application/json',
         'content-type': 'application/json',
-        'Authorization': `bearer ${this.githubToken}`
+        Authorization: `bearer ${this.githubToken}`
       },
       body: JSON.stringify({
         QUERY,
@@ -146,7 +151,7 @@ class ReviewStats {
     console.log(`Pulling stats for ${this.repository}: ${response.status}`)
 
     //TODO we're not checking pagination yet
-     
+
     return response.json()
   }
 
@@ -169,12 +174,14 @@ class ReviewStats {
       const timeToMerge = mergedAt.valueOf() - publishedAt.valueOf()
 
       const requestedReviewers = {} as Record<string, Date | undefined>
-      const reviewers = new Set<string>() 
+      const reviewers = new Set<string>()
       let comments = 0
       let reviews = 0
       pr.timelineItems.nodes.forEach((item: any) => {
         if (item.__typename === 'ReviewRequestedEvent') {
-          requestedReviewers[item.requestedReviewer.login] = new Date(item.createdAt)
+          requestedReviewers[item.requestedReviewer.login] = new Date(
+            item.createdAt
+          )
         }
         if (item.__typename === 'PullRequestReview') {
           const login = item.author.login
@@ -185,7 +192,7 @@ class ReviewStats {
               timesToReview: [],
               reviewStates: [],
               comments: 0,
-              reviewedPRs: 0,
+              reviewedPRs: 0
             }
           }
           reviewerStats[login].reviewStates.push(item.state)
@@ -193,7 +200,10 @@ class ReviewStats {
 
           const request = requestedReviewers[login]
           if (request) {
-            const timeToReview = calculateTimeToReview(request, new Date(item.submittedAt))
+            const timeToReview = calculateTimeToReview(
+              request,
+              new Date(item.submittedAt)
+            )
             reviewerStats[login].timesToReview.push(timeToReview)
             requestedReviewers[login] = undefined
           }
@@ -214,13 +224,16 @@ class ReviewStats {
                 timesToReview: [],
                 reviewStates: [],
                 comments: 0,
-                reviewedPRs: 0,
+                reviewedPRs: 0
               }
             }
 
             const request = requestedReviewers[login]
             if (request) {
-              const timeToReview = calculateTimeToReview(request, new Date(item.createdAt))
+              const timeToReview = calculateTimeToReview(
+                request,
+                new Date(item.createdAt)
+              )
               reviewerStats[login].timesToReview.push(timeToReview)
               requestedReviewers[login] = undefined
             }
@@ -240,7 +253,7 @@ class ReviewStats {
                   timesToReview: [],
                   reviewStates: [],
                   comments: 0,
-                  reviewedPRs: 0,
+                  reviewedPRs: 0
                 }
               }
               reviewerStats[login].comments++
@@ -257,9 +270,9 @@ class ReviewStats {
         number: pr.number,
         url: pr.url,
         author: pr.author,
-        timeToMerge: timeToMerge,
+        timeToMerge,
         comments,
-        reviews,
+        reviews
       }
     })
 
@@ -269,10 +282,22 @@ class ReviewStats {
     }
   }
 
-  formatReviewers = (reviewerStats) => {
+  formatReviewers = reviewerStats => {
     const format = [15, 9]
     const rows = [] as string[]
-    rows.push(formatRow(['login', 'median time to review', 'reviewed PRs', 'comments', 'approvals', 'changes requested'], format))
+    rows.push(
+      formatRow(
+        [
+          'login',
+          'median time to review',
+          'reviewed PRs',
+          'comments',
+          'approvals',
+          'changes requested'
+        ],
+        format
+      )
+    )
 
     const reviewers = Object.values(reviewerStats)
     reviewers.sort((a: any, b: any) => {
@@ -283,28 +308,77 @@ class ReviewStats {
       return medianA < medianB ? -1 : 1
     })
     reviewers.forEach((reviewer: any) => {
-      const {login, timesToReview, reviewedPRs, reviewStates, comments} = reviewer
+      const {login, timesToReview, reviewedPRs, reviewStates, comments} =
+        reviewer
       const medianTimeToReview = safeMs(median(timesToReview))
-      const approvals = reviewStates.filter(state => state === 'APPROVED').length
-      const changesRequested = reviewStates.filter(state => state === 'CHANGES_REQUESTED').length
-      rows.push(formatRow([login, medianTimeToReview, reviewedPRs, comments, approvals, changesRequested], format))
+      const approvals = reviewStates.filter(
+        state => state === 'APPROVED'
+      ).length
+      const changesRequested = reviewStates.filter(
+        state => state === 'CHANGES_REQUESTED'
+      ).length
+      rows.push(
+        formatRow(
+          [
+            login,
+            medianTimeToReview,
+            reviewedPRs,
+            comments,
+            approvals,
+            changesRequested
+          ],
+          format
+        )
+      )
     })
     return rows.join('\n')
   }
 
-  formatPrs = (prs) => {
+  formatPrs = prs => {
     const format = [20, 6]
     const rows = [] as string[]
     rows.push(formatRow(['', 'min', 'max', 'median'], format))
 
-    const timesToMerge = prs.map(({timeToMerge}: {timeToMerge: number}) => timeToMerge)
-    rows.push(formatRow(['time to merge', safeMs(Math.min(...timesToMerge)), safeMs(Math.max(...timesToMerge)), safeMs(median(timesToMerge))], format))
+    const timesToMerge = prs.map(
+      ({timeToMerge}: {timeToMerge: number}) => timeToMerge
+    )
+    rows.push(
+      formatRow(
+        [
+          'time to merge',
+          safeMs(Math.min(...timesToMerge)),
+          safeMs(Math.max(...timesToMerge)),
+          safeMs(median(timesToMerge))
+        ],
+        format
+      )
+    )
 
     const comments = prs.map(({comments}) => comments)
-    rows.push(formatRow(['comments per PR', Math.min(...comments), Math.max(...comments), median(comments)], format))
+    rows.push(
+      formatRow(
+        [
+          'comments per PR',
+          Math.min(...comments),
+          Math.max(...comments),
+          median(comments)
+        ],
+        format
+      )
+    )
 
     const reviews = prs.map(({reviews}) => reviews)
-    rows.push(formatRow(['reviews per PR', Math.min(...reviews), Math.max(...reviews), median(reviews)], format))
+    rows.push(
+      formatRow(
+        [
+          'reviews per PR',
+          Math.min(...reviews),
+          Math.max(...reviews),
+          median(reviews)
+        ],
+        format
+      )
+    )
 
     return rows.join('\n')
   }
@@ -326,7 +400,7 @@ class ReviewStats {
     if (process.argv.includes('--debug')) {
       console.log('\nDEBUG')
       console.log('Read following PRs')
-      prs.forEach((pr) => {
+      prs.forEach(pr => {
         console.log(`#${pr.number} ${pr.url}`)
         console.log(`- author: ${pr.author.login}`)
         console.log(`- comments: ${pr.comments}`)
@@ -338,37 +412,43 @@ class ReviewStats {
     }
 
     const slackMessage = {
-      blocks: [{
-        type: 'section',
-        text: {
-          type: 'mrkdwn',
-          text: `*Review stats for last ${this.timeDiff}*\nTotal ${prs.length} PRs merged`
+      blocks: [
+        {
+          type: 'section',
+          text: {
+            type: 'mrkdwn',
+            text: `*Review stats for last ${this.timeDiff}*\nTotal ${prs.length} PRs merged`
+          }
         },
-      }, {
-        type: 'section',
-        text: {
-          type: 'mrkdwn',
-          text: 'Reviewer stats'
+        {
+          type: 'section',
+          text: {
+            type: 'mrkdwn',
+            text: 'Reviewer stats'
+          }
         },
-      }, {
-        type: 'section',
-        text: {
-          type: 'mrkdwn',
-          text: '```\n' + this.formatReviewers(reviewerStats) + '\n```'
+        {
+          type: 'section',
+          text: {
+            type: 'mrkdwn',
+            text: `\`\`\`\n${this.formatReviewers(reviewerStats)}\n\`\`\``
+          }
         },
-      }, {
-        type: 'section',
-        text: {
-          type: 'mrkdwn',
-          text: 'PR stats'
+        {
+          type: 'section',
+          text: {
+            type: 'mrkdwn',
+            text: 'PR stats'
+          }
         },
-      }, {
-        type: 'section',
-        text: {
-          type: 'mrkdwn',
-          text: '```\n' + this.formatPrs(prs) + '\n```'
-        },
-      }]
+        {
+          type: 'section',
+          text: {
+            type: 'mrkdwn',
+            text: `\`\`\`\n${this.formatPrs(prs)}\n\`\`\``
+          }
+        }
+      ]
     }
 
     this.pushToSlack(slackMessage)
