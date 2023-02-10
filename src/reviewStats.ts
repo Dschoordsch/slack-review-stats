@@ -168,7 +168,7 @@ class ReviewStats {
   parseStats = (rawData: any) => {
     const reviewerStats = {} as any
 
-    core.debug('rawData:', rawData)
+    core.debug(`rawData: ${JSON.stringify(rawData)}`)
     const prs = rawData.data.search.nodes.map((pr: any) => {
       const publishedAt = new Date(pr.publishedAt)
       const mergedAt = new Date(pr.mergedAt)
