@@ -6,7 +6,7 @@ import fetch from 'node-fetch'
 dayjs.extend(isoWeek)
 
 const GITHUB_ENDPOINT = 'https://api.github.com/graphql'
-const QUERY = `
+const query = `
 query($searchQuery: String!) { 
   search(query: $searchQuery, type: ISSUE, first: 100) {
     pageInfo {
@@ -134,6 +134,7 @@ class ReviewStats {
     const searchQuery = `is:pr archived:false is:closed is:merged repo:${
       this.repository
     } merged:>=${mergedAfter.toISOString()}`
+    core.debug(`searchQuery: ${searchQuery}`)
     const response = await fetch(GITHUB_ENDPOINT, {
       method: 'POST',
       headers: {
@@ -142,7 +143,7 @@ class ReviewStats {
         Authorization: `bearer ${this.githubToken}`
       },
       body: JSON.stringify({
-        QUERY,
+        query,
         variables: {
           searchQuery
         }
