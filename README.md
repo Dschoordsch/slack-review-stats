@@ -2,7 +2,26 @@
 
 This workflow collects review statistics and posts them to Slack. The intention is to increase awareness for reviewers how they're doing. It is developed and used at [ParabolInc/parabol](https://github.com/ParabolInc/parabol).
 
-## TODO
+## Configure the workflow
+
+You need to create a [Slack webhook](https://api.slack.com/messaging/webhooks) and pass it via `slack-webhook` to the workflow. All other configuration options are optional.
+
+Your workflow should look something like this
+```
+name: Pull Request Stats
+
+on:
+  schedule:
+    - cron: '54 14 * * 5'
+
+jobs:
+  stats:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: Dschoordsch/slack-review-stats@v1
+        with:
+          slack-webhook: ${{ secrets.SLACK_WEBHOOK }}
+```
 
 ## Publish to a distribution branch
 
@@ -15,8 +34,6 @@ $ git add dist
 $ git commit -a -m "prod dependencies"
 $ git push origin releases/v1
 ```
-
-Note: We recommend using the `--license` option for ncc, which will create a license file for all of the production node modules used in your project.
 
 Your action is now published! :rocket: 
 
